@@ -20,7 +20,9 @@ begin
     when '--version'; puts GitVisualize::VERSION; exit
     end
   end
-rescue
-  puts "wrong option"
+rescue StandardError => e
+  puts "wrong option: " + e.inspect
   exit
 end
+
+require "git-visualize/server"

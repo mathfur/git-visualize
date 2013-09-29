@@ -53,6 +53,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<simplecov-rcov>, [">= 0"])
       s.add_runtime_dependency(%q<active_support>, [">= 0"])
       s.add_runtime_dependency(%q<i18n>, [">= 0"])
+      s.add_runtime_dependency(%q<sinatra>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.4"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
@@ -63,6 +64,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<simplecov-rcov>, [">= 0"])
       s.add_dependency(%q<active_support>, [">= 0"])
       s.add_dependency(%q<i18n>, [">= 0"])
+      s.add_dependency(%q<sinatra>, [">= 0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
     end
   else
@@ -74,6 +76,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<simplecov-rcov>, [">= 0"])
     s.add_dependency(%q<active_support>, [">= 0"])
     s.add_dependency(%q<i18n>, [">= 0"])
+    s.add_dependency(%q<sinatra>, [">= 0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.4"])
   end
 end
