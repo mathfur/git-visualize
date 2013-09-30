@@ -2,7 +2,11 @@
 
 module GitVisualize
   class Server < Sinatra::Base
+    set :root, BASE_DIR
 
+    get '/' do
+      haml :index
+    end
 
     # csv data for main table
     get '/rev_list.csv' do
@@ -20,7 +24,7 @@ module GitVisualize
       # y_order.csvを返す
     end
 
-    helper do
+    helpers do
       def execute_script(cmd)
         Dir.chdir(TARGET_DIR) do
           statement = "ruby #{BASE_DIR}/scripts/#{cmd}"
