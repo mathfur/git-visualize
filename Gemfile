@@ -13,6 +13,7 @@ gem 'active_support'
 gem 'i18n'
 
 gem 'sinatra'
+gem 'coffee-script'
 
 group :development do
   gem "jeweler",  "~> 1.6.4"
