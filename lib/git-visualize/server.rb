@@ -21,8 +21,9 @@ module GitVisualize
     end
 
     # used to sort
-    get '/y_order' do
-      # y_order.csvを返す
+    get '/dictionary_orderd_paths.csv' do
+      revision = params[:revision] or raise "params[:revision] is needed."
+      execute_script("dictionary_ordered_paths.rb #{Shellwords.escape(revision)}")
     end
 
     get '/js/main.js' do
