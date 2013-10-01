@@ -29,13 +29,13 @@ d3.csv "/rev_path_list.csv?revision="+sample_rev, (rev_paths) ->
     width  = windowWidt() - margin.left - margin.right
     height = font_size*paths.length - margin.top - margin.bottom
 
-    # xScale, yScale定義 =============================================
+    # xScale, yScale definition =============================================
     paths = _.sortBy(paths, (path)-> ordered_paths.indexOf(path))
 
     xScale = d3.scale.ordinal().domain(revs).rangeBands([0, width])
     yScale = d3.scale.ordinal().domain(paths).rangeBands([0, height])
 
-    # width, height設定 ==============================================
+    # width, height definition ==============================================
     svg.attr("width", width + margin.left + margin.right)
        .attr("height", height + margin.top + margin.bottom)
 
