@@ -26,7 +26,7 @@ d3.csv "/rev_path_list.csv?revision="+sample_rev, (rev_paths) ->
     paths = _.uniq(rev_paths.map((d) -> d.path ))
     max_size = d3.max(rev_paths.map((d) -> d.size*1 ))
 
-    width  = windowWidt() - margin.left - margin.right
+    width  = windowWidth() - margin.left - margin.right
     height = font_size*paths.length - margin.top - margin.bottom
 
     # xScale, yScale definition =============================================
@@ -51,6 +51,16 @@ d3.csv "/rev_path_list.csv?revision="+sample_rev, (rev_paths) ->
                   .scale(yScale)
                   .orient("left")
                   .ticks(0)
+
+    _.each(paths, (path, i) ->
+      base.append("rect")
+          .attr(
+            "x": 0
+            "y": yScale(path)
+            "width": width
+            "height": height / paths.length
+            "fill": if (i % 2 == 0) then "#fff" else "#eee"
+          ))
 
     base.selectAll("rect.git-history")
         .data(rev_paths)
