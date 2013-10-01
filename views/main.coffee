@@ -1,3 +1,7 @@
+margin = {top: 15, right: 10, bottom: 10, left: 50}
+font_size = 10
+eps = 10
+
 color = d3.scale.linear().domain([0, 10]).range(["hsl(300, 100%, 50%)",  "hsl(120, 100%, 50%)"]).interpolate(d3.interpolateHsl)
 
 svg = d3.select("body").append("svg")
@@ -16,31 +20,22 @@ svg.selectAll('rect.color-table')
 
 sample_rev = "v0.99~900"
 
-
 d3.csv "/rev_path_list.csv?revision="+sample_rev, (rev_paths) ->
   d3.csv "/dictionary_orderd_paths.csv?revision="+sample_rev, (ordered_paths) ->
     revs = _.uniq(rev_paths.map((d) -> d.rev ))
     paths = _.uniq(rev_paths.map((d) -> d.path ))
     max_size = d3.max(rev_paths.map((d) -> d.size*1 ))
 
-    margin = {top: 15, right: 10, bottom: 10, left: 50}
-    font_size = 10
-    eps = 10
-    width =  (window.innerWidth || documentElement.clientWidth || getElementsByTagName('body')[0].clientWidth) - margin.left - margin.right
+    width  = windowWidt() - margin.left - margin.right
     height = font_size*paths.length - margin.top - margin.bottom
 
-    xScale = d3.scale.ordinal().domain(revs).rangeBands([0, width])
-
-    left_side = {}
-    rev_paths.forEach (obj) ->
-      x = xScale(obj.rev)
-      if(!left_side[obj.path] || (x < left_side[obj.path]))
-        left_side[obj.path] = x
-
+    # xScale, yScale定義 =============================================
     paths = _.sortBy(paths, (path)-> ordered_paths.indexOf(path))
 
+    xScale = d3.scale.ordinal().domain(revs).rangeBands([0, width])
     yScale = d3.scale.ordinal().domain(paths).rangeBands([0, height])
 
+    # width, height設定 ==============================================
     svg.attr("width", width + margin.left + margin.right)
        .attr("height", height + margin.top + margin.bottom)
 
@@ -61,6 +56,7 @@ d3.csv "/rev_path_list.csv?revision="+sample_rev, (rev_paths) ->
         .data(rev_paths)
         .enter()
         .append("rect")
+        .attr("class", "git-history")
         .attr("width", width / revs.length )
         .attr("height", height / paths.length )
         .attr("title", (d) -> d.size + " byte (" + d.rev + " | " + d.path + ")" )

@@ -9,3 +9,7 @@ function getParam(key){
     return result
   }
 }
+
+function windowWidth(){
+    return window.innerWidth || documentElement.clientWidth || getElementsByTagName('body')[0].clientWidth;
+}
