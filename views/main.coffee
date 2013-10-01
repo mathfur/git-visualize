@@ -35,8 +35,13 @@ else
       height = heightOuter - margin.top - margin.bottom
 
       # xScale, yScale definition =============================================
-      paths = _.sortBy(paths, (path)-> ordered_paths.indexOf(path))
-      #paths = paths.sort()
+      if getParam('order') == 'created_at'
+        paths = _.sortBy(paths, (path)-> ordered_paths.indexOf(path))
+      else if getParam('order') == 'normal'
+        paths = paths.sort()
+      else
+        alert "Need order=('created_at' or 'normal') to URL query"
+        return
 
       xScale = d3.scale.ordinal().domain(revs).rangeBands([0, width])
       yScale = d3.scale.ordinal().domain(paths).rangeBands([0, height])
