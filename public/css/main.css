@@ -1,0 +1,122 @@
+body {
+  font-family: "Consolas", "Liberation Mono", "Courier", "monospace";
+  padding-top: 40px;
+}
+
+svg {
+  background: -webkit-linear-gradient(top,  #f0f0ff,  #fff);       /* Safari 5.1+,  Chrome 10+,  iOS Safari 5.1+,  Android 4.0+ */
+  background:    -moz-linear-gradient(top,  #f0f0ff,  #fff);       /* Firefox 3.6-15.0 */
+  background:      -o-linear-gradient(top,  #f0f0ff,  #fff);       /* Opera 11.10-12.10 */
+  background:         linear-gradient(to bottom,  #f0f0ff,  #fff); /* IE10,  Firefox 16.0+,  Opera 12.50+ */
+}
+
+div#base {
+  position: relative;
+}
+
+div#base > svg {
+  padding-top: 50px;
+}
+
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+div.label {
+  background-color: #FFFFFF;
+  border-radius: 3px;
+  color: #000;
+
+  z-index: 5;
+  position: absolute;
+  visibility: visible;
+
+  font-family: trebuchet ms, helvetica, sans-serif;
+  opacity: 0.6;
+  border-width: 0;
+}
+
+div.around-text-tip {
+  background-color: #FFFFFF;
+  border-radius: 3px;
+  border: 3px solid #EEEEEE;
+  color: #333333;
+
+  padding: 4px;
+
+  z-index: 10;
+  position: absolute;
+  visibility: visible;
+}
+
+div.around-text-tip * {
+  padding: 0px;
+  margin: 0px;
+  border: none;
+  background-color: transparent;
+}
+
+div.around-text-tip tr td.lnum {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+div.around-text-tip tr td.content {
+  padding-left: 10px;
+  border-left: 1px solid #aaa;
+  border-top: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+  border-left-color: #E5E5E5;
+}
+
+div.around-text-tip tr.current {
+  background-color: rgb(255, 255, 204);
+}
+
+input#fname-lnum-for-copy {
+  width: 800px;
+  margin: 3px;
+}
+
+div.delete {
+  line-height: 17px;
+  border-width: 0px;
+  border-radius: 4px;
+  background-color: #F1F1E9;
+  border-shadow: #F1F1E9 0px 1px 0px 0px;
+  margin-top: 2px;
+  margin-right: 4px;
+  margin-left: 2px;
+}
+
+.genericon {
+  text-align: center;
+  font-size: 15px;
+}
+
+svg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+div#source-area {
+  position: relative;
+}
+
+div#source-area div {
+  position: absolute;
+  display: none;
+  z-index: 15;
+  top: 5px;
+  left: -10px;
+  padding: 5px;
+}
+
+div#source-area div textarea {
+  width: 800px;
+  height: 200px;
+}

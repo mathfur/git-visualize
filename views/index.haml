@@ -3,10 +3,30 @@
   %head
     %title title
     %meta{:'http-equiv' => "Content-Type", :content => "text/html;charset=utf-8"}
-    %link{:href => "css/main.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/reset.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/main.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/genericons.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/bootstrap.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/css/bootstrap-responsive.css", :rel => "stylesheet", :type => "text/css"}
     %script{:src => "/js/d3.js"}
     %script{:src => '/js/jquery-2.0.3.js'}
     %script{:src => '/js/underscore.js'}
     %script{:src => '/js/helper.js'}
+    %script{:src => '/js/bootstrap.js'}
   %body
-    %script{:src => "/js/main.js"}
+    %div.navbar.navbar-fixed-top
+      %div.navbar-inner
+        %div.container
+          %ul.nav.pull-left
+            %a.brand Git-History
+            %li.divider-vertical
+            %li
+              %a#source-area-toggle source
+              %div#source-area
+                %div
+                  %textarea#source-area-text{:cols => "250", :rows => "40"}
+            %li.divider-vertical
+            %li
+              %input#fname-lnum-for-copy{:type => "text", :value => "filename:line"}
+    %div#base
+    %script{:src => "js/main.js"}

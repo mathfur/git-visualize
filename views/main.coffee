@@ -4,7 +4,7 @@ eps = 10
 
 color = d3.scale.linear().domain([0, 100]).range(["hsl(300, 100%, 50%)",  "hsl(120, 100%, 50%)"]).interpolate(d3.interpolateHsl)
 
-svg = d3.select("body").append("svg")
+svg = d3.select("div#base").append("svg")
 
 svg.selectAll('rect.color-table')
    .data(d3.range(10))
