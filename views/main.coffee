@@ -2,7 +2,7 @@ margin = {top: 15, right: 10, bottom: 10, left: 15}
 font_size = 10
 eps = 10
 
-color = d3.scale.linear().domain([0, 100]).range(["hsl(300, 100%, 50%)",  "hsl(120, 100%, 50%)"]).interpolate(d3.interpolateHsl)
+color = d3.scale.linear().domain([0, 10]).range(["hsl(240, 100%, 90%)",  "hsl(240, 100%, 50%)"]).interpolate(d3.interpolateHsl)
 
 svg = d3.select("div#base").append("svg")
 
@@ -18,28 +18,43 @@ svg.selectAll('rect.color-table')
    .attr('fill', (d) -> color(d) )
    .each((d) -> d )
 
+drawTable = (rev_path_pairs, ordered_revs, ordered_paths, rev_order, path_order) ->
+  revs = _.uniq(rev_path_pairs.map((d) -> d.rev ))
+  paths = _.uniq(rev_path_pairs.map((d) -> d.path ))
+  max_size = d3.max(rev_path_pairs.map((d) -> d.size*1 ))
+  color.domain([0, max_size])
 
-drawTable = (rev_paths, ordered_paths, order) ->
-  revs = _.uniq(rev_paths.map((d) -> d.rev ))
-  paths = _.uniq(rev_paths.map((d) -> d.path ))
-  max_size = d3.max(rev_paths.map((d) -> d.size*1 ))
-
+  # size definition =============================================
   widthOuter = (windowWidth() - 50)
   heightOuter = font_size*paths.length
   width  = widthOuter - margin.left - margin.right
   height = heightOuter - margin.top - margin.bottom
 
   # xScale, yScale definition =============================================
-  if order == 'created_at'
-    paths = _.sortBy(paths, (path)-> ordered_paths.indexOf(path))
-  else if order == 'normal'
-    paths = paths.sort()
-  else
-    alert "Need order=('created_at' or 'normal') to URL query"
-    return
+  xScale = d3.scale.ordinal().rangeBands([0, width])
+  yScale = d3.scale.ordinal().rangeBands([0, height])
 
-  xScale = d3.scale.ordinal().domain(revs).rangeBands([0, width])
-  yScale = d3.scale.ordinal().domain(paths).rangeBands([0, height])
+  switch rev_order
+    when 'created_at'
+      xScale.domain(_.sortBy(revs, (rev)-> ordered_revs.indexOf(rev)))
+    when 'normal'
+      xScale.domain(revs.sort())
+    when 'none'
+      xScale.domain(revs)
+    else
+      alert "Need rev_order=('none', 'created_at' or 'normal') to URL query"
+      return
+
+  switch path_order
+    when 'created_at'
+      yScale.domain(_.sortBy(paths, (path)-> ordered_paths.indexOf(path)))
+    when 'normal'
+      yScale.domain(paths.sort())
+    when 'none'
+      yScale.domain(paths)
+    else
+      alert "Need path_order=('none', 'created_at' or 'normal') to URL query"
+      return
 
   # width, height definition ==============================================
   svg.attr("width", widthOuter)
@@ -73,30 +88,52 @@ drawTable = (rev_paths, ordered_paths, order) ->
       .data(paths)
       .enter()
       .append("text")
-      .attr("text-anchor", "start")
-      .attr("font-size", font_size)
-      .attr("fill", (path)-> "black" )
-      .attr("x", (path, i)-> 0 )
-      .attr("y", (path, i)-> yScale(path) + font_size/2 + 1 )
+      .attr(
+        "text-anchor": "start"
+        "font-size": font_size
+        "fill": (path)-> "black"
+        "x": (path, i)-> 0
+        "y": (path, i)-> yScale(path) + font_size/2 + 1
+      )
       .text((d)-> d )
       .each((d)-> label_width = Math.max(label_width, @getBBox().width))
 
   base.selectAll("rect.git-history")
-      .data(rev_paths)
+      .data(rev_path_pairs)
       .enter()
       .append("rect")
-      .attr("class", "git-history")
-      .attr("width", width / revs.length )
-      .attr("height", height / paths.length )
-      .attr("title", (d) -> d.size + " byte (" + d.rev + " | " + d.path + ")" )
-      .attr("fill", (d) -> color(d.size % 100))
-      .attr("x", (d, i) -> label_width + xScale(d.rev) )
-      .attr("y", (d, i) -> yScale(d.path) )
+      .attr(
+        "class": "git-history"
+        "width": width / revs.length
+        "height": height / paths.length
+        "title": (d) -> d.size + " byte (" + d.rev + " | " + d.path + ")"
+        "fill": (d) -> color(d.size)
+        "x": (d, i)-> label_width + xScale(d.rev)
+        "y": (d, i) -> yScale(d.path)
+      )
+
+getRevPathPairs = (range, func)->
+  d3.csv("/rev_path_list.csv?revision=" + escape(range), func)
+
+getRevs = (range, func)->
+  d3.csv("/revs.csv?revision=" + escape(range), func)
+
+getPaths = (range, func)->
+  d3.csv("/dictionary_orderd_paths.csv?revision=" + escape(range), func)
+
+all_rev_path_pairs = []
 
 start_revision = getParam('revision')
-unless start_revision
-  alert "Need revision=(SHA1, branch or tag) to URL query"
-else
-  d3.csv "/rev_path_list.csv?revision="+start_revision, (rev_paths) ->
-    d3.csv "/dictionary_orderd_paths.csv?revision="+start_revision, (ordered_paths) ->
-      drawTable rev_paths, ordered_paths, getParam('order')
+length = getParam('length') || 10
+step = getParam('step') || 1
+all_range = start_revision + "~" + length + ".." + start_revision
+
+_.each d3.range(Math.ceil(length*1.0 / step)), (r)->
+  range = start_revision + "~" + (r+1)*step + ".." + start_revision + "~" + r*step
+  unless range && all_range
+    alert "Need range=(SHA1..SHA1) to URL query"
+  getRevs all_range, (ordered_revs)->
+    getPaths all_range, (ordered_paths)->
+       getRevPathPairs range, (new_rev_path_pairs)->
+         all_rev_path_pairs = _.uniq(all_rev_path_pairs.concat(new_rev_path_pairs))
+         drawTable(all_rev_path_pairs, ordered_revs, ordered_paths, getParam('rev_order'), getParam('path_order'))
