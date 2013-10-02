@@ -16,8 +16,9 @@ module GitVisualize
     end
 
     # used to sort
-    get '/x_order' do
-      `ruby scripts/rev_path_list.rb`
+    get '/revs.csv' do
+      revision = params[:revision] or raise "params[:revision] is needed."
+      execute_script("revs.rb #{Shellwords.escape(revision)}")
     end
 
     # used to sort
