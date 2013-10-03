@@ -21,12 +21,15 @@
             %a.brand Git-History
             %li.divider-vertical
             %li
-              %a#source-area-toggle source
+              %a#source-area-toggle Source
               %div#source-area
                 %div
                   %textarea#source-area-text{:cols => "250", :rows => "40"}
             %li.divider-vertical
             %li
               %input#fname-lnum-for-copy{:type => "text", :value => "filename:line"}
+              %button#colorize COLORIZE
+              %button#step STEP
+
     %div#base
     %script{:src => "js/main.js"}

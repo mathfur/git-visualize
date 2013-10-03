@@ -5,6 +5,7 @@ eps = 10
 color = d3.scale.linear().domain([0, 10]).range(["hsl(240, 100%, 90%)",  "hsl(240, 100%, 50%)"]).interpolate(d3.interpolateHsl)
 
 svg = d3.select("div#base").append("svg")
+git_table = null
 
 svg.selectAll('rect.color-table')
    .data(d3.range(10))
@@ -98,42 +99,48 @@ drawTable = (rev_path_pairs, ordered_revs, ordered_paths, rev_order, path_order)
       .text((d)-> d )
       .each((d)-> label_width = Math.max(label_width, @getBBox().width))
 
-  base.selectAll("rect.git-history")
-      .data(rev_path_pairs)
-      .enter()
-      .append("rect")
-      .attr(
-        "class": "git-history"
-        "width": width / revs.length
-        "height": height / paths.length
-        "title": (d) -> d.size + " byte (" + d.rev + " | " + d.path + ")"
-        "fill": (d) -> color(d.size)
-        "x": (d, i)-> label_width + xScale(d.rev)
-        "y": (d, i) -> yScale(d.path)
-      )
+  git_table = base.selectAll("rect.git-table")
+                  .data(rev_path_pairs)
+                  .enter()
+                  .append("rect")
+
+  git_table.attr(
+              "class": "git-table"
+              "width": width / revs.length
+              "height": height / paths.length
+              "fill": (d)-> color(d.size)
+              "title": (d) -> d.size + " byte (" + d.rev + " | " + d.path + ")"
+              "x": (d, i)-> label_width + xScale(d.rev)
+              "y": (d, i) -> yScale(d.path)
+            )
 
 getRevPathPairs = (range, func)->
   d3.csv("/rev_path_list.csv?revision=" + escape(range), func)
 
 getRevs = (range, func)->
-  d3.csv("/revs.csv?revision=" + escape(range), func)
+  d3.csv("/revs.csv?revision=" + escape(range), (ds)-> func(_.pluck(ds, 'rev')))
 
 getPaths = (range, func)->
-  d3.csv("/dictionary_orderd_paths.csv?revision=" + escape(range), func)
+  d3.csv("/dictionary_orderd_paths.csv?revision=" + escape(range), (ds)-> func(_.pluck(ds, 'path')))
+
+# button =====================================
+d3.select("#colorize").on 'click', ()->
+  git_table.attr("fill": (d)-> color(d.size) )
+
+start_loc = (getParam('start_loc') || 954)*1
+start_revision = getParam('revision')
+step = getParam('step') || 1
 
 all_rev_path_pairs = []
-
-start_revision = getParam('revision')
-length = getParam('length') || 10
-step = getParam('step') || 1
-all_range = start_revision + "~" + length + ".." + start_revision
-
-_.each d3.range(Math.ceil(length*1.0 / step)), (r)->
-  range = start_revision + "~" + (r+1)*step + ".." + start_revision + "~" + r*step
-  unless range && all_range
-    alert "Need range=(SHA1..SHA1) to URL query"
+current_loc = start_loc
+d3.select("#step").on 'click', ()->
+  range = start_revision + "~" + current_loc*step + ".." + start_revision + "~" + (current_loc-1)*step
+  all_range = start_revision + "~" + start_loc*step + ".." + start_revision + "~" + (current_loc-1)*step
   getRevs all_range, (ordered_revs)->
     getPaths all_range, (ordered_paths)->
        getRevPathPairs range, (new_rev_path_pairs)->
          all_rev_path_pairs = _.uniq(all_rev_path_pairs.concat(new_rev_path_pairs))
          drawTable(all_rev_path_pairs, ordered_revs, ordered_paths, getParam('rev_order'), getParam('path_order'))
+  current_loc -= 1
+
+# =============================================
